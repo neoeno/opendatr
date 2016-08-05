@@ -33,6 +33,27 @@ class CSVResolverTest extends FunSpec {
     }
   }
 
+  describe("given a weirder CSV file") {
+    val tempFile = File.createTempFile("temp", "file")
+    val writer = new FileWriter(tempFile)
+    writer.write("col 1, col 2\n")
+    writer.write("row 1 column 1, row 1 column 2\n")
+    writer.write("\"row 2, column 1 \",row 2 \"\"column' 2\n")
+    writer.flush()
+    writer.close()
+
+    describe("#resolve") {
+      it("returns a corresponding dataset") {
+        val dataset = resolver.resolve(tempFile).asInstanceOf[Dataset]
+        assert(dataset.getEntities.length === 2)
+        assert(dataset.getEntities(0).getValues("col 1") === "row 1 column 1")
+        assert(dataset.getEntities(0).getValues(" col 2") === " row 1 column 2")
+        assert(dataset.getEntities(1).getValues("col 1") === "row 2, column 1 ")
+        assert(dataset.getEntities(1).getValues(" col 2") === "row 2 \"column' 2")
+      }
+    }
+  }
+
   describe("given a file with no comma on the first line") {
     val tempFile = File.createTempFile("temp", "file")
     val writer = new FileWriter(tempFile)
