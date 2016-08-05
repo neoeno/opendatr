@@ -49,6 +49,11 @@ class QueenResolverTest extends FunSpec with GeneratorDrivenPropertyChecks {
           assert(resolved.isInstanceOf[File])
           assert(resolved.asInstanceOf[File].getAbsolutePath == tempFile.getAbsolutePath)
         }
+
+        it("reports that it is resolving using PathResolver") {
+          resolver.resolve(tempFile.getAbsolutePath)
+          assert(announcerPair._2.toString.contains("Resolving with PathResolver"))
+        }
       }
     }
 

@@ -15,9 +15,12 @@ class QueenResolver(announcer: Announcer, resolvers: List[Resolver]) extends Res
 
   private def recursiveResolve(puzzle: Any): Any = {
     if (canResolve(puzzle)) {
-      resolvers.find { (resolver) =>
+      val resolver = resolvers.find { (resolver) =>
         resolver.canResolve(puzzle)
-      }.get.resolve(puzzle)
+      }.get
+
+      announcer.announceGood(s"Resolving with ${resolver.getClass.getSimpleName}")
+      resolver.resolve(puzzle)
     } else {
       announcer.announceBad("Sorry, couldn't resolve this one! You're on your own!")
     }

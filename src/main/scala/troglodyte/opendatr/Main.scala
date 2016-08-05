@@ -1,6 +1,6 @@
 package troglodyte.opendatr
 
-import troglodyte.opendatr.resolvers.QueenResolver
+import troglodyte.opendatr.resolvers.{PathResolver, QueenResolver}
 
 object Main extends App {
   val announcer = new Announcer(System.out)
@@ -10,7 +10,9 @@ object Main extends App {
 
   val initialPuzzle = getInitialPuzzleFromArgs
 
-  new QueenResolver(announcer, List()).resolve(initialPuzzle)
+  new QueenResolver(announcer, List(
+    new PathResolver
+  )).resolve(initialPuzzle)
 
   def getInitialPuzzleFromArgs: String = {
     args(0)
