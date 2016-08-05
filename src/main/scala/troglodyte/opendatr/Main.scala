@@ -6,7 +6,7 @@ object Main extends App {
   val announcer = new Announcer(System.out)
   validateArgs()
 
-  announcer.announceGood("Welcome to OpenDatr!")
+  announcer.welcome("Welcome to OpenDatr!")
 
   val initialPuzzle = getInitialPuzzleFromArgs
 

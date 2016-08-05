@@ -19,7 +19,7 @@ class QueenResolver(announcer: Announcer, resolvers: List[Resolver]) extends Res
         resolver.canResolve(puzzle)
       }.get
 
-      announcer.announceGood(s"Resolving with ${resolver.getClass.getSimpleName}")
+      announcer.announce(s"Resolving with ${resolver.getClass.getSimpleName}")
       resolve(resolver.resolve(puzzle))
     } else {
       announcer.announceBad("Sorry, couldn't resolve this one! You're on your own!")
