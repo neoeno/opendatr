@@ -5,5 +5,7 @@ import java.io.PrintStream
 import pl.project13.scala.rainbow.Rainbow._
 
 class Announcer(stream: PrintStream) {
-  def announce(message: String) = stream.println(message.green)
+  def getStream(): PrintStream = stream
+  def announceBad(message: String) = stream.println(message.red)
+  def announceGood(message: String) = stream.println(message.green)
 }
