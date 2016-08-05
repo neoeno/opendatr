@@ -2,10 +2,7 @@ package troglodyte.opendatr.resolvers
 
 import troglodyte.opendatr.Announcer
 
-class QueenResolver(announcer: Announcer) extends Resolver {
-  private val resolvers = List[Resolver](
-  )
-
+class QueenResolver(announcer: Announcer, resolvers: List[Resolver]) extends Resolver {
   override def canResolve(puzzle: Any): Boolean = {
     resolvers.exists { (resolver) =>
       resolver.canResolve(puzzle)

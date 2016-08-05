@@ -10,7 +10,7 @@ object Main extends App {
 
   val initialPuzzle = getInitialPuzzleFromArgs
 
-  new QueenResolver(announcer).resolve(initialPuzzle)
+  new QueenResolver(announcer, List()).resolve(initialPuzzle)
 
   def getInitialPuzzleFromArgs: String = {
     args(0)
