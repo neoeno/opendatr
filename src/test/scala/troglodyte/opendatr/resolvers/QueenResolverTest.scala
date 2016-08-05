@@ -44,15 +44,14 @@ class QueenResolverTest extends FunSpec with GeneratorDrivenPropertyChecks {
       }
 
       describe("#resolve") {
-        it("resolves to a File") {
-          val resolved = resolver.resolve(tempFile.getAbsolutePath)
-          assert(resolved.isInstanceOf[File])
-          assert(resolved.asInstanceOf[File].getAbsolutePath == tempFile.getAbsolutePath)
-        }
-
         it("reports that it is resolving using PathResolver") {
           resolver.resolve(tempFile.getAbsolutePath)
           assert(announcerPair._2.toString.contains("Resolving with PathResolver"))
+        }
+
+        it("reports that it cannot resolve any further") {
+          resolver.resolve(tempFile.getAbsolutePath)
+          assert(announcerPair._2.toString.contains("Sorry, couldn't resolve this one! You're on your own!"))
         }
       }
     }
