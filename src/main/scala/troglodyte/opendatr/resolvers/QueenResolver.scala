@@ -1,8 +1,10 @@
 package troglodyte.opendatr.resolvers
 
-import troglodyte.opendatr.Announcer
+import troglodyte.opendatr.{Announcer, Dataset}
 
 class QueenResolver(announcer: Announcer, resolvers: List[Resolver]) extends Resolver {
+  var completelyResolved = false
+
   override def canResolve(puzzle: Any): Boolean = {
     resolvers.exists { (resolver) =>
       resolver.canResolve(puzzle)
@@ -13,6 +15,8 @@ class QueenResolver(announcer: Announcer, resolvers: List[Resolver]) extends Res
     recursiveResolve(puzzle)
   }
 
+  def resolvedSuccessfully(): Boolean = completelyResolved
+
   private def recursiveResolve(puzzle: Any): Any = {
     if (canResolve(puzzle)) {
       val resolver = resolvers.find { (resolver) =>
@@ -20,9 +24,13 @@ class QueenResolver(announcer: Announcer, resolvers: List[Resolver]) extends Res
       }.get
 
       announcer.announce(s"Resolving with ${resolver.getClass.getSimpleName}")
-      resolve(resolver.resolve(puzzle))
-    } else {
-      announcer.announceBad("Sorry, couldn't resolve this one! You're on your own!")
+      val resolved = resolver.resolve(puzzle)
+      if (resolved.isInstanceOf[Dataset]) {
+        completelyResolved = true
+        resolved
+      } else {
+        recursiveResolve(resolved)
+      }
     }
   }
 }

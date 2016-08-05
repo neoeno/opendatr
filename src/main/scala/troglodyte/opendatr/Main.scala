@@ -10,9 +10,17 @@ object Main extends App {
 
   val initialPuzzle = getInitialPuzzleFromArgs
 
-  new QueenResolver(announcer, List(
+  val resolver = new QueenResolver(announcer, List(
     new PathResolver
-  )).resolve(initialPuzzle)
+  ))
+
+  val resolved = resolver.resolve(initialPuzzle)
+
+  if (resolver.completelyResolved) {
+    announcer.announceGood("Successfully resolved!")
+  } else {
+    announcer.announceBad("Sorry, couldn't resolve this one! You're on your own!")
+  }
 
   def getInitialPuzzleFromArgs: String = {
     args(0)

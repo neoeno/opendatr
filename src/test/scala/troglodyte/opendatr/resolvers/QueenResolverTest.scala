@@ -10,8 +10,8 @@ class QueenResolverTest extends FunSpec with GeneratorDrivenPropertyChecks {
   describe("with empty list") {
     describe("#canResolve") {
       it("can't actually resolve anything yet") {
-        val announcerPair = TestFactory.makeAnnouncer()
-        val resolver = new QueenResolver(announcerPair._1, List())
+        val announcer = TestFactory.makeAnnouncer()
+        val resolver = new QueenResolver(announcer, List())
         forAll { (anything: String) =>
           assert(resolver.canResolve(anything) === false)
         }
@@ -19,39 +19,43 @@ class QueenResolverTest extends FunSpec with GeneratorDrivenPropertyChecks {
     }
 
     describe("#resolve") {
-      it("reports its disappointment") {
+      it("is null") {
         forAll { (anything: String) =>
-          val announcerPair = TestFactory.makeAnnouncer()
-          val resolver = new QueenResolver(announcerPair._1, List())
+          val announcer = TestFactory.makeAnnouncer()
+          val resolver = new QueenResolver(announcer, List())
+          assert(resolver.resolve(anything) === ())
+        }
+      }
+
+      it("does not mark the resolver as complete") {
+        forAll { (anything: String) =>
+          val announcer = TestFactory.makeAnnouncer()
+          val resolver = new QueenResolver(announcer, List())
           resolver.resolve(anything)
-          assert(announcerPair._2.toString.contains("Sorry, couldn't resolve this one! You're on your own!"))
+          assert(resolver.completelyResolved === false)
         }
       }
     }
   }
 
   describe("with a singleton list of PathResolver") {
-    val announcerPair = TestFactory.makeAnnouncer()
-    val resolver = new QueenResolver(announcerPair._1, List(new PathResolver))
-
     describe("and a valid path") {
       val tempFile = File.createTempFile("temp", "file")
 
       describe("#canResolve") {
         it("is true") {
+          val announcer = TestFactory.makeAnnouncer()
+          val resolver = new QueenResolver(announcer, List(new PathResolver))
           assert(resolver.canResolve(tempFile.getAbsolutePath))
         }
       }
 
       describe("#resolve") {
-        it("reports that it is resolving using PathResolver") {
+        it("cannot resolve completely") {
+          val announcer = TestFactory.makeAnnouncer()
+          val resolver = new QueenResolver(announcer, List(new PathResolver))
           resolver.resolve(tempFile.getAbsolutePath)
-          assert(announcerPair._2.toString.contains("Resolving with PathResolver"))
-        }
-
-        it("reports that it cannot resolve any further") {
-          resolver.resolve(tempFile.getAbsolutePath)
-          assert(announcerPair._2.toString.contains("Sorry, couldn't resolve this one! You're on your own!"))
+          assert(resolver.completelyResolved === false)
         }
       }
     }
@@ -59,6 +63,8 @@ class QueenResolverTest extends FunSpec with GeneratorDrivenPropertyChecks {
     describe("and an invalid path") {
       describe("#canResolve") {
         it("is false") {
+          val announcer = TestFactory.makeAnnouncer()
+          val resolver = new QueenResolver(announcer, List(new PathResolver))
           assert(resolver.canResolve("non/extant/path") === false)
         }
       }
@@ -67,6 +73,8 @@ class QueenResolverTest extends FunSpec with GeneratorDrivenPropertyChecks {
     describe("and a random object") {
       describe("#canResolve") {
         it("is false") {
+          val announcer = TestFactory.makeAnnouncer()
+          val resolver = new QueenResolver(announcer, List(new PathResolver))
           assert(resolver.canResolve(new Object) === false)
         }
       }
