@@ -11,7 +11,7 @@ class CSVResolverTest extends FunSpec {
   describe("given a file with a comma on the first line") {
     val tempFile = File.createTempFile("temp", "file")
     val writer = new FileWriter(tempFile)
-    writer.write("hello,world\nthe,thing")
+    writer.write("col1,col2\ncol1row1,col2row1\ncol1row2,col2row2")
     writer.flush()
     writer.close()
 
@@ -24,9 +24,11 @@ class CSVResolverTest extends FunSpec {
     describe("#resolve") {
       it("returns a corresponding dataset") {
         val dataset = resolver.resolve(tempFile).asInstanceOf[Dataset]
-        assert(dataset.getEntities.length === 1)
-        assert(dataset.getEntities.head.getValues("hello") === "the")
-        assert(dataset.getEntities.head.getValues("world") === "thing")
+        assert(dataset.getEntities.length === 2)
+        assert(dataset.getEntities(0).getValues("col1") === "col1row1")
+        assert(dataset.getEntities(0).getValues("col2") === "col2row1")
+        assert(dataset.getEntities(1).getValues("col1") === "col1row2")
+        assert(dataset.getEntities(1).getValues("col2") === "col2row2")
       }
     }
   }
