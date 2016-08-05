@@ -1,6 +1,6 @@
 package troglodyte.opendatr
 
-class Main {
-  def main(args: Array[String]): Unit = {
-  }
+object Main extends App {
+  val announcer = new Announcer(System.out);
+  announcer.announce("Welcome to OpenDatr!")
 }
