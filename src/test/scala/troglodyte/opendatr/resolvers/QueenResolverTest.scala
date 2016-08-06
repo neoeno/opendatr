@@ -19,20 +19,11 @@ class QueenResolverTest extends FunSpec with GeneratorDrivenPropertyChecks {
     }
 
     describe("#resolve") {
-      it("is null") {
+      it("is empty") {
         forAll { (anything: String) =>
           val announcer = TestFactory.makeAnnouncer()
           val resolver = new QueenResolver(announcer, List())
-          assert(resolver.resolve(anything) === ())
-        }
-      }
-
-      it("does not mark the resolver as complete") {
-        forAll { (anything: String) =>
-          val announcer = TestFactory.makeAnnouncer()
-          val resolver = new QueenResolver(announcer, List())
-          resolver.resolve(anything)
-          assert(resolver.completelyResolved === false)
+          assert(resolver.resolve(anything).isEmpty)
         }
       }
     }
@@ -51,11 +42,10 @@ class QueenResolverTest extends FunSpec with GeneratorDrivenPropertyChecks {
       }
 
       describe("#resolve") {
-        it("cannot resolve completely") {
+        it("cannot resolve completely, so is empty") {
           val announcer = TestFactory.makeAnnouncer()
           val resolver = new QueenResolver(announcer, List(new PathResolver))
-          resolver.resolve(tempFile.getAbsolutePath)
-          assert(resolver.completelyResolved === false)
+          assert(resolver.resolve(tempFile.getAbsolutePath).isEmpty)
         }
       }
     }

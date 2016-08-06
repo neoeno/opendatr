@@ -16,11 +16,14 @@ class CSVResolver extends Resolver {
     case _ => false
   }
 
-  override def resolve(puzzle: Any): Any = {
+  override def resolve(puzzle: Any): Option[Any] = {
     val file = puzzle.asInstanceOf[File]
-    new Dataset(CSVReader.open(file).iteratorWithHeaders.map { (row: Map[String, String]) =>
-      new Entity(row)
-    }.toList)
+    val reader = CSVReader.open(file)
+    Some(
+      new Dataset(reader.iteratorWithHeaders.map { (row: Map[String, String]) =>
+        new Entity(row)
+      }.toList)
+    )
   }
 
   def withLines[T](file: File)(f: Iterator[String] => T): T = {

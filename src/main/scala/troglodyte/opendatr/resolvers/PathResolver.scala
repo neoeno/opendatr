@@ -10,8 +10,8 @@ class PathResolver extends Resolver {
       false
   }
 
-  override def resolve(puzzle: Any): Any = {
+  override def resolve(puzzle: Any): Option[Any] = {
     val path = puzzle.asInstanceOf[String]
-    new File(path)
+    Option(new File(path))
   }
 }

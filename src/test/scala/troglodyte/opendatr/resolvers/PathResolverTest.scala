@@ -19,8 +19,8 @@ class PathResolverTest extends FunSpec {
     describe("#resolve") {
       it("resolves to a File") {
         val resolved = resolver.resolve(tempFile.getAbsolutePath)
-        assert(resolved.isInstanceOf[File])
-        assert(resolved.asInstanceOf[File].getAbsolutePath == tempFile.getAbsolutePath)
+        assert(resolved.get.isInstanceOf[File])
+        assert(resolved.get.asInstanceOf[File].getAbsolutePath == tempFile.getAbsolutePath)
       }
     }
   }

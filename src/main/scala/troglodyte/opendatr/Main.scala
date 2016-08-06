@@ -15,16 +15,14 @@ object Main extends App {
     new CSVResolver
   ))
 
-  val resolved = resolver.resolve(initialPuzzle)
-
-  if (resolver.completelyResolved) {
-    announcer.announceGood("Successfully resolved!")
-    resolved.asInstanceOf[Dataset].getEntities.foreach((entity: Entity) => {
-      println(entity.getValues)
-    })
-  } else {
+  val resolved = resolver.resolve(initialPuzzle).getOrElse {
     announcer.announceBad("Sorry, couldn't resolve this one! You're on your own!")
   }
+
+  announcer.announceGood("Successfully resolved!")
+  resolved.asInstanceOf[Dataset].getEntities.foreach((entity: Entity) => {
+    println(entity.getValues)
+  })
 
   def getInitialPuzzleFromArgs: String = {
     args(0)
