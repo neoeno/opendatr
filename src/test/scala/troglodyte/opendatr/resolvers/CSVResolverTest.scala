@@ -4,9 +4,10 @@ import java.io.{File, FileWriter}
 
 import org.scalatest.FunSpec
 import troglodyte.opendatr.Dataset
+import troglodyte.opendatr.askers.PresetMapAsker
 
 class CSVResolverTest extends FunSpec {
-  val resolver = new CSVResolver
+  var resolver = new CSVResolver(new PresetMapAsker(Map()))
 
   describe("given a file with a comma on the first line") {
     val tempFile = File.createTempFile("temp", "file")
@@ -22,18 +23,38 @@ class CSVResolverTest extends FunSpec {
     }
 
     describe("#resolve") {
-      it("returns a corresponding dataset") {
-        val dataset = resolver.resolve(tempFile).get.asInstanceOf[Dataset]
-        assert(dataset.getEntities.length === 2)
-        assert(dataset.getEntities(0).getValues("col1") === "col1row1")
-        assert(dataset.getEntities(0).getValues("col2") === "col2row1")
-        assert(dataset.getEntities(1).getValues("col1") === "col1row2")
-        assert(dataset.getEntities(1).getValues("col2") === "col2row2")
+      describe("when the user signals headings") {
+        var resolver = new CSVResolver(new PresetMapAsker(Map('has_headings -> true)))
+
+        it("returns a corresponding dataset") {
+          val dataset = resolver.resolve(tempFile).get.asInstanceOf[Dataset]
+          assert(dataset.getEntities.length === 2)
+          assert(dataset.getEntities(0).getValues("col1") === "col1row1")
+          assert(dataset.getEntities(0).getValues("col2") === "col2row1")
+          assert(dataset.getEntities(1).getValues("col1") === "col1row2")
+          assert(dataset.getEntities(1).getValues("col2") === "col2row2")
+        }
+      }
+
+      describe("when the user signals no headings") {
+        var resolver = new CSVResolver(new PresetMapAsker(Map('has_headings -> false)))
+
+        it("returns a corresponding dataset") {
+          val dataset = resolver.resolve(tempFile).get.asInstanceOf[Dataset]
+          assert(dataset.getEntities.length === 3)
+          assert(dataset.getEntities(0).getValues("0") === "col1")
+          assert(dataset.getEntities(0).getValues("1") === "col2")
+          assert(dataset.getEntities(1).getValues("0") === "col1row1")
+          assert(dataset.getEntities(1).getValues("1") === "col2row1")
+          assert(dataset.getEntities(2).getValues("0") === "col1row2")
+          assert(dataset.getEntities(2).getValues("1") === "col2row2")
+        }
       }
     }
   }
 
   describe("given a weirder CSV file") {
+    var resolver = new CSVResolver(new PresetMapAsker(Map('has_headings -> true)))
     val tempFile = File.createTempFile("temp", "file")
     val writer = new FileWriter(tempFile)
     writer.write("col 1, col 2\n")
