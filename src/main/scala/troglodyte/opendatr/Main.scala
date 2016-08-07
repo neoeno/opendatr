@@ -1,6 +1,9 @@
 package troglodyte.opendatr
 
+import java.io.FileWriter
+
 import troglodyte.opendatr.askers.StdInAsker
+import troglodyte.opendatr.exporters.CSVExporter
 import troglodyte.opendatr.resolvers.{CSVResolver, PathResolver, QueenResolver}
 
 object Main extends App {
@@ -19,12 +22,11 @@ object Main extends App {
 
   val resolved = resolver.resolve(initialPuzzle).getOrElse {
     announcer.announceBad("Sorry, couldn't resolve this one! You're on your own!")
-  }
+  }.asInstanceOf[Dataset]
 
   announcer.announceGood("Successfully resolved!")
-  resolved.asInstanceOf[Dataset].getEntities.foreach((entity: Entity) => {
-    println(entity.getValues)
-  })
+
+  new CSVExporter(new FileWriter("output.csv")).export(resolved)
 
   def getInitialPuzzleFromArgs: String = {
     args(0)
