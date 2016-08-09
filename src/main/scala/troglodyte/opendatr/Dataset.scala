@@ -1,14 +1,6 @@
 package troglodyte.opendatr
 
-class Dataset(entities: List[Entity]) {
+class Dataset(attributes: List[String], entities: List[Entity]) {
   def getEntities = entities
-
-  def getAttributes: List[String] = {
-    if (entities.isEmpty) { return List() }
-    // We do this here by iterating through all Entities and
-    // unioning up all the keys. Mostly preserves order, probably quite costly
-    entities.foldLeft(Set[String]()) { (acc, entity) =>
-      acc.union(entity.getValues.keySet)
-    }.toList
-  }
+  def getAttributes = attributes
 }

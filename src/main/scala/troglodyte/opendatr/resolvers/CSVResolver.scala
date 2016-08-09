@@ -8,7 +8,7 @@ import troglodyte.opendatr.{Dataset, Entity}
 
 import scala.io.Source
 
-class CSVResolver(asker: Asker) extends Resolver {
+class CSVResolver(asker: Asker) extends DatasetGeneratingResolver {
   override def canResolve(puzzle: Any): Boolean = puzzle match {
     case file: File =>
       withLines(file) { (lines: Iterator[String]) =>
@@ -17,23 +17,22 @@ class CSVResolver(asker: Asker) extends Resolver {
     case _ => false
   }
 
-  override def resolve(puzzle: Any): Option[Any] = {
+  override def resolve(puzzle: Any): Option[Dataset] = {
     val file = puzzle.asInstanceOf[File]
     withClosing(CSVReader.open(file)) { (reader: CSVReader) =>
-      Some(new Dataset(
-        if (hasHeadings(file)) {
-          reader.iteratorWithHeaders.map { (row: Map[String, String]) =>
-            new Entity(row)
-          }.toList
-        } else {
-          reader.iterator.map { (row: Seq[String]) =>
-            // should these keys really be strings?
-            new Entity(
-              row.zipWithIndex.map(pair => (pair._2.toString, pair._1)).toMap
-            )
-          }.toList
-        }
-      ))
+      if (hasHeadings(file)) {
+        val x = reader.allWithOrderedHeaders()
+        Some(new Dataset(x._1, x._2.map(r => new Entity(r))))
+      } else {
+        val firstLine = reader.iterator.next
+        val attributes = firstLine.indices.map(n => n.toString).toList
+        Some(new Dataset(attributes, (Iterator.single(firstLine) ++ reader.iterator).map { (row: Seq[String]) =>
+          // should these keys really be strings?
+          new Entity(
+            row.zipWithIndex.map(pair => (pair._2.toString, pair._1)).toMap
+          )
+        }.toList))
+      }
     }
   }
 

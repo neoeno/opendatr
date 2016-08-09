@@ -5,8 +5,8 @@ import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 class DatasetTest extends FunSpec with GeneratorDrivenPropertyChecks {
   describe("with some entities") {
-    val entities = List(new Entity(Map()))
-    val dataset = new Dataset(entities)
+    val entities = List(new Entity(Map("hello" -> "world")))
+    val dataset = new Dataset(List(), entities)
 
     describe("#getEntities") {
       it("returns the entities") {
@@ -15,28 +15,13 @@ class DatasetTest extends FunSpec with GeneratorDrivenPropertyChecks {
     }
   }
 
-  describe("#getAttributes") {
-    describe("when given no entities") {
-      it("returns an empty list") {
-        val dataset = new Dataset(List[Entity]())
-        assert(dataset.getAttributes.isEmpty)
-      }
-    }
+  describe("with some attributes") {
+    val attributes = List("hello")
+    val dataset = new Dataset(attributes, List(new Entity(Map())))
 
-    describe("when given entities with no values") {
-      it("returns an empty list") {
-        val dataset = new Dataset(List(new Entity(Map())))
-        assert(dataset.getAttributes.isEmpty)
-      }
-    }
-
-    it("returns a comprehensive list of attributes") {
-      forAll { (rows: List[Map[String, String]]) =>
-        val dataset = new Dataset(rows.map(r => new Entity(r)))
-        whenever(rows.nonEmpty) {
-          val attributes = rows.map(r => r.keySet).reduce((a, b) => a.union(b))
-          assert(dataset.getAttributes.toSet == attributes)
-        }
+    describe("#getAttributes") {
+      it("returns the attributes") {
+        assert(dataset.getAttributes == attributes)
       }
     }
   }
