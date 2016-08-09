@@ -1,7 +1,8 @@
 package troglodyte.opendatr.resolvers
 
-import java.io.{File, FileWriter}
+import java.io.{File, FileOutputStream, FileWriter}
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.scalatest.FunSpec
 import troglodyte.opendatr.Dataset
 import troglodyte.opendatr.askers.PresetMapAsker
@@ -83,6 +84,20 @@ class CSVResolverTest extends FunSpec {
     writer.write("hello world")
     writer.flush()
     writer.close()
+
+    describe("#canResolve") {
+      it("is false") {
+        assert(resolver.canResolve(tempFile) === false)
+      }
+    }
+  }
+
+  describe("given an Excel file") {
+    val tempFile = File.createTempFile("temp", "file")
+    val outputStream = new FileOutputStream(tempFile)
+    val workbook = new HSSFWorkbook()
+    workbook.write(outputStream)
+    outputStream.close()
 
     describe("#canResolve") {
       it("is false") {

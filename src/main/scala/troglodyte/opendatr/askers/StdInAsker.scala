@@ -6,7 +6,7 @@ import scala.io.StdIn
 
 class StdInAsker extends Asker {
   override def askYesNo(name: Symbol, question: String): Boolean = {
-    print(bullet(question.yellow))
+    print(bullet(s"$question [Yn] ".yellow))
     val answer = StdIn.readLine()
     !answer.matches("[nN]")
   }

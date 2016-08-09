@@ -4,7 +4,7 @@ import java.io.FileWriter
 
 import troglodyte.opendatr.askers.StdInAsker
 import troglodyte.opendatr.exporters.JSONExporter
-import troglodyte.opendatr.resolvers.{CSVResolver, PathResolver, QueenResolver}
+import troglodyte.opendatr.resolvers.{CSVResolver, ExcelResolver, PathResolver, QueenResolver}
 
 object Main extends App {
   val announcer = new Announcer(System.out)
@@ -17,7 +17,8 @@ object Main extends App {
 
   val resolver = new QueenResolver(announcer, List(
     new PathResolver,
-    new CSVResolver(asker)
+    new CSVResolver(asker),
+    new ExcelResolver(asker)
   ))
 
   val resolved = resolver.resolve(initialPuzzle).getOrElse {

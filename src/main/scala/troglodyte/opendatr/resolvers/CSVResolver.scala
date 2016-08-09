@@ -11,8 +11,12 @@ import scala.io.Source
 class CSVResolver(asker: Asker) extends Resolver {
   override def canResolve(puzzle: Any): Boolean = puzzle match {
     case file: File =>
-      withLines(file) { (lines: Iterator[String]) =>
-        lines.hasNext && lines.next.contains(",")
+      try {
+        withLines(file) { (lines: Iterator[String]) =>
+          lines.hasNext && lines.next.contains(",")
+        }
+      } catch {
+        case _: Exception => false
       }
     case _ => false
   }
@@ -41,7 +45,7 @@ class CSVResolver(asker: Asker) extends Resolver {
     val headingReader = CSVReader.open(file)
     asker.show(headingReader.iterator.take(1).toList.head.mkString(", "))
     headingReader.close()
-    asker.askYesNo('has_headings, s"Do these look like column headings to you? [Yn] ")
+    asker.askYesNo('has_headings, "Do these look like column headings to you?")
   }
 
   private def withClosing[T, R <: Closeable](reader: R)(f: R => T): T = {
