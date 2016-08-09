@@ -1,10 +1,10 @@
 package troglodyte.opendatr.resolvers
 
-import java.io.{File, PrintStream}
+import java.io.File
 
 import org.scalatest.FunSpec
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import troglodyte.opendatr.{Announcer, TestFactory}
+import troglodyte.opendatr.TestFactory
 
 class QueenResolverTest extends FunSpec with GeneratorDrivenPropertyChecks {
   describe("with empty list") {

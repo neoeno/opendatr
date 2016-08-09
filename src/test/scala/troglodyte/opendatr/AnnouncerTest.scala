@@ -2,7 +2,7 @@ package troglodyte.opendatr
 
 import java.io.{ByteArrayOutputStream, PrintStream}
 
-import org.scalatest.{FunSpec, Matchers}
+import org.scalatest.FunSpec
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 class AnnouncerTest extends FunSpec with GeneratorDrivenPropertyChecks {

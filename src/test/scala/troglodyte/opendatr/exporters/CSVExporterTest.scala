@@ -1,8 +1,7 @@
 package troglodyte.opendatr.exporters
 
-import java.io.{StringReader, StringWriter}
+import java.io.StringWriter
 
-import com.github.tototoshi.csv.{CSVParser, CSVReader}
 import org.scalatest.FunSpec
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import troglodyte.opendatr.{Dataset, Entity}
