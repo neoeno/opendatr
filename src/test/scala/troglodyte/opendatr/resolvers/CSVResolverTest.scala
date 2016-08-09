@@ -28,6 +28,7 @@ class CSVResolverTest extends FunSpec {
 
         it("returns a corresponding dataset") {
           val dataset = resolver.resolve(tempFile).get.asInstanceOf[Dataset]
+          assert(dataset.getAttributes == List("col1", "col2"))
           assert(dataset.getEntities.length === 2)
           assert(dataset.getEntities(0).getValues("col1") === "col1row1")
           assert(dataset.getEntities(0).getValues("col2") === "col2row1")
@@ -42,6 +43,7 @@ class CSVResolverTest extends FunSpec {
         it("returns a corresponding dataset") {
           val dataset = resolver.resolve(tempFile).get.asInstanceOf[Dataset]
           assert(dataset.getEntities.length === 3)
+          assert(dataset.getAttributes == List("0", "1"))
           assert(dataset.getEntities(0).getValues("0") === "col1")
           assert(dataset.getEntities(0).getValues("1") === "col2")
           assert(dataset.getEntities(1).getValues("0") === "col1row1")
