@@ -14,12 +14,9 @@ It won't do much yet though.
 
 ## Roadmap
 
-* Get rid of CSV. I hate CSV
-* XLS/XLSX resolver
+* Make XLS/XLSX attribute extractor smarter
 * Shapefile resolver
 * Zip resolver
-* GeoJSON export
-* CSV export
 * Attribute prompting
 * Dataset gatherer
 * Recipe saver
