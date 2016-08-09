@@ -15,18 +15,18 @@ class DatasetTest extends FunSpec with GeneratorDrivenPropertyChecks {
     }
   }
 
-  describe("#getAttributes") {
+  describe("#allRootAttributesUsed") {
     describe("when given no entities") {
       it("returns an empty list") {
         val dataset = new Dataset(List[Entity]())
-        assert(dataset.getAttributes.isEmpty)
+        assert(dataset.allRootAttributesUsed.isEmpty)
       }
     }
 
     describe("when given entities with no values") {
       it("returns an empty list") {
         val dataset = new Dataset(List(new Entity(Map())))
-        assert(dataset.getAttributes.isEmpty)
+        assert(dataset.allRootAttributesUsed.isEmpty)
       }
     }
 
@@ -35,7 +35,7 @@ class DatasetTest extends FunSpec with GeneratorDrivenPropertyChecks {
         val dataset = new Dataset(rows.map(r => new Entity(r)))
         whenever(rows.nonEmpty) {
           val attributes = rows.map(r => r.keySet).reduce((a, b) => a.union(b))
-          assert(dataset.getAttributes.toSet == attributes)
+          assert(dataset.allRootAttributesUsed.toSet == attributes)
         }
       }
     }

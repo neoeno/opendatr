@@ -10,6 +10,7 @@ libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.3"
 libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.4"
 libraryDependencies += "org.apache.poi" % "poi" % "3.14"
 libraryDependencies += "org.apache.poi" % "poi-ooxml" % "3.14"
+libraryDependencies += "com.google.code.gson" % "gson" % "2.7"
 
 // Test
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test"

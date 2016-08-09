@@ -14,6 +14,7 @@ It won't do much yet though.
 
 ## Roadmap
 
+* Get rid of CSV. I hate CSV
 * XLS/XLSX resolver
 * Shapefile resolver
 * Zip resolver

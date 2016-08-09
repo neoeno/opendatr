@@ -3,7 +3,7 @@ package troglodyte.opendatr
 import java.io.FileWriter
 
 import troglodyte.opendatr.askers.StdInAsker
-import troglodyte.opendatr.exporters.CSVExporter
+import troglodyte.opendatr.exporters.JSONExporter
 import troglodyte.opendatr.resolvers.{CSVResolver, PathResolver, QueenResolver}
 
 object Main extends App {
@@ -26,7 +26,7 @@ object Main extends App {
 
   announcer.announceGood("Successfully resolved!")
 
-  new CSVExporter(new FileWriter("output.csv")).export(resolved)
+  new JSONExporter(new FileWriter("output.json")).export(resolved)
 
   def getInitialPuzzleFromArgs: String = {
     args(0)
