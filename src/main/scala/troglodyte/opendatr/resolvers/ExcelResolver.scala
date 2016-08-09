@@ -1,11 +1,13 @@
 package troglodyte.opendatr.resolvers
 
-import scala.collection.JavaConverters._
 import java.io.File
 
 import org.apache.poi.ss.usermodel.{Cell, DateUtil, Sheet, WorkbookFactory}
 import troglodyte.opendatr.askers.Asker
+import troglodyte.opendatr.utils.ResolverUtils
 import troglodyte.opendatr.{Dataset, Entity}
+
+import scala.collection.JavaConverters._
 
 class ExcelResolver(asker: Asker) extends Resolver {
   override def canResolve(puzzle: Any): Boolean = puzzle match {
@@ -21,15 +23,18 @@ class ExcelResolver(asker: Asker) extends Resolver {
 
   override def resolve(puzzle: Any): Option[Any] = {
     val file = puzzle.asInstanceOf[File]
-    val workbookFactory = WorkbookFactory.create(file)
-    val firstSheet = workbookFactory.getSheetAt(0)
-    val (ignoreRow, columnsToHeadings) = getColumnsToHeadingsMap(firstSheet)
-    Some(new Dataset(firstSheet.rowIterator.asScala
-      .filterNot(row => ignoreRow.contains(row.getRowNum)) // Ignore heading row
-      .map(row => {
-        new Entity(row.cellIterator.asScala.map(cell =>
-          (columnsToHeadings(cell.getColumnIndex), getCellValue(cell))).toMap)
-    }).toList))
+    ResolverUtils.withClosing(WorkbookFactory.create(file)) { workbookFactory =>
+      val firstSheet = workbookFactory.getSheetAt(0)
+      val (ignoreRow, columnsToHeadings) = getColumnsToHeadingsMap(firstSheet)
+      Some(new Dataset(firstSheet.rowIterator.asScala
+        .filterNot(row => ignoreRow.contains(row.getRowNum)) // Ignore heading row
+        .map(row => {
+          new Entity(row.cellIterator.asScala.map(cell =>
+            (columnsToHeadings(cell.getColumnIndex), getCellValue(cell))
+          ).toMap)
+        }).toList
+      ))
+    }
   }
 
   def getCellValue(cell: Cell): Any = {
