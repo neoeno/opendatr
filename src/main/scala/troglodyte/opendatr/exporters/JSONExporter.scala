@@ -14,6 +14,7 @@ class JSONExporter(fileWriter: Writer) extends Exporter {
         pair._2 match {
           case value: String => writer.name(pair._1).value(value)
           case value: Number => writer.name(pair._1).value(value)
+          case value: java.util.Date => writer.name(pair._1).value(value.toString)
           case _ => throw new IllegalArgumentException(s"Don't know how to export attribute '${pair._1}' of type ${pair._2.getClass}")
         }
       })
