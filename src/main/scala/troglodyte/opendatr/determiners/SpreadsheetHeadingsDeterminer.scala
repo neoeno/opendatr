@@ -4,14 +4,29 @@ import troglodyte.opendatr.askers.Asker
 import scala.Function.tupled
 
 class SpreadsheetHeadingsDeterminer(asker: Asker) {
-
   def determineHeadings(rows: List[List[Any]]): Option[Int] = {
-    val rowsWithIndex = rows.zipWithIndex
-    val filteredRows = orderByClosenessToMedian(eliminateGappyRows(eliminateBlankRows(rowsWithIndex)))
+    val filteredRows = orderByClosenessToMedian(
+      eliminateGappyRows(
+        eliminateBlankRows(
+          trimRows(
+            rows.zipWithIndex))))
     asker.choose('pick_headings_row, "Which of these options looks most like headings to you?",
       filteredRows.take(3).map(tupled { (r, idx) => r.mkString(", ") })).map(n =>
       filteredRows(n)._2
     )
+  }
+
+  private def trimRows(rows: List[(List[Any], Int)]): List[(List[Any], Int)] = {
+    rows.map(tupled { (row, idx) =>
+      (
+        row
+          .dropWhile(cell => cell.toString.trim.isEmpty)
+          .reverse
+          .dropWhile(cell => cell.toString.trim.isEmpty)
+          .reverse,
+        idx
+      )
+    })
   }
 
   private def eliminateBlankRows(rows: List[(List[Any], Int)]): List[(List[Any], Int)] = {

@@ -64,6 +64,28 @@ class SpreadsheetHeadingsDeterminerTest extends FunSpec {
       }
     }
 
+    describe("given a list of rows some of which have blank ends") {
+      val rows = List(
+        List("", "col1", "col2", "col3", "", ""),
+        List(4, 5, 6)
+      )
+
+      it("does not present the user with the blank ends") {
+        val determiner = new SpreadsheetHeadingsDeterminer(new TestFactory.UnimplementedAsker {
+          override def choose(name: Symbol, question: String, options: List[String]): Option[Integer] = {
+            assert(options == List(
+              "col1, col2, col3",
+              "4, 5, 6"
+            ))
+            Some(0)
+          }
+        })
+
+        assert(determiner.determineHeadings(rows).contains(0))
+      }
+    }
+
+
     describe("given a list of rows of differing lengths") {
       val rows = List(
         List("overall_title"),

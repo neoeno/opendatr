@@ -18,7 +18,7 @@ class StdInAsker extends Asker {
     options.zipWithIndex.foreach(tupled { (option, idx) =>
       println(s"${idx+1}. $option".white)
     })
-    print(bullet(s"question [1-${options.length} or N if none] "))
+    print(bullet(s"$question [1-${options.length} or N if none] ".yellow))
     val answer = StdIn.readLine()
     if (answer.matches("[nN]")) {
       None
