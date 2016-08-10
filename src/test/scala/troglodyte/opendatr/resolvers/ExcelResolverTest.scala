@@ -35,7 +35,7 @@ class ExcelResolverTest extends FunSpec {
 
     describe("#resolve") {
       describe("when the user indicates column headings") {
-        val resolver = new ExcelResolver(new PresetMapAsker(Map('has_headings -> true)))
+        val resolver = new ExcelResolver(new PresetMapAsker(Map('pick_headings_row -> Some(0))))
 
         it("returns a Dataset with the values associated with columns") {
           val dataset = resolver.resolve(tempFile).get.asInstanceOf[Dataset]
@@ -45,8 +45,18 @@ class ExcelResolverTest extends FunSpec {
         }
       }
 
+      describe("when the user indicates column headings further down") {
+        val resolver = new ExcelResolver(new PresetMapAsker(Map('pick_headings_row -> Some(1))))
+
+        it("returns a Dataset with the values associated with columns, ignoring the rows before the headings") {
+          val dataset = resolver.resolve(tempFile).get.asInstanceOf[Dataset]
+          assert(dataset.getEntities.length == 1)
+          assert(dataset.getEntities(0).getValues == Map("1.0" -> 3, "2.0" -> 4))
+        }
+      }
+
       describe("when the user indicates no column headings") {
-        val resolver = new ExcelResolver(new PresetMapAsker(Map('has_headings -> false)))
+        val resolver = new ExcelResolver(new PresetMapAsker(Map('pick_headings_row -> None)))
 
         it("returns a Dataset with the values associated with column indexes") {
           val dataset = resolver.resolve(tempFile).get.asInstanceOf[Dataset]
