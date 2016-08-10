@@ -2,7 +2,7 @@ package troglodyte.opendatr.resolvers
 
 import java.io.File
 
-import org.apache.poi.ss.usermodel.{Cell, DateUtil, Sheet, WorkbookFactory}
+import org.apache.poi.ss.usermodel._
 import troglodyte.opendatr.askers.Asker
 import troglodyte.opendatr.determiners.SpreadsheetHeadingsDeterminer
 import troglodyte.opendatr.utils.ResolverUtils
@@ -22,12 +22,19 @@ class ExcelResolver(asker: Asker) extends Resolver {
     case _ => false
   }
 
+  def pickSheet(workbook: Workbook): Sheet = {
+    val sheets = workbook.sheetIterator.asScala.toList
+    val choice = asker.choose('pick_sheet, "Which of these sheets would you like to export?",
+      sheets.map(sheet => sheet.getSheetName)) // TODO: no is not allowed
+    choice.map(workbook.getSheetAt(_)).get
+  }
+
   override def resolve(puzzle: Any): Option[Any] = {
     val file = puzzle.asInstanceOf[File]
-    ResolverUtils.withClosing(WorkbookFactory.create(file)) { workbookFactory =>
-      val firstSheet = workbookFactory.getSheetAt(0)
-      val (ignoreRow, columnsToHeadings) = getColumnsToHeadingsMap(firstSheet)
-      Some(new Dataset(firstSheet.rowIterator.asScala
+    ResolverUtils.withClosing(WorkbookFactory.create(file)) { workbook =>
+      val sheet = pickSheet(workbook)
+      val (ignoreRow, columnsToHeadings) = getColumnsToHeadingsMap(sheet)
+      Some(new Dataset(sheet.rowIterator.asScala
         .filter(row => ignoreRow.isEmpty || ignoreRow.exists(_ < row.getRowNum)) // Select only rows after the heading
         .filterNot(row => row.cellIterator.asScala.mkString.trim.isEmpty)
         .map(row => {
