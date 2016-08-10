@@ -11,7 +11,7 @@ class SpreadsheetHeadingsDeterminerTest extends FunSpec {
         List("col1", "col2", "col3"),
         List(4, 5, 6),
         List(7, 8, 9)
-      )
+      ).zipWithIndex
 
       it("asks the user to pick and follows the user's answer") {
         val determiner = new SpreadsheetHeadingsDeterminer(new PresetMapAsker(Map('pick_headings_row -> Some(1))))
@@ -25,7 +25,7 @@ class SpreadsheetHeadingsDeterminerTest extends FunSpec {
         List("", " ", ""),
         List("col1", "col2", "col3"),
         List(4, 5, 6)
-      )
+      ).zipWithIndex
 
       it("does not present the user with empty rows") {
         val determiner = new SpreadsheetHeadingsDeterminer(new TestFactory.UnimplementedAsker {
@@ -47,7 +47,7 @@ class SpreadsheetHeadingsDeterminerTest extends FunSpec {
         List("hello", " ", "world"),
         List("col1", "col2", "col3"),
         List(4, 5, 6)
-      )
+      ).zipWithIndex
 
       it("does not present the user with the gappy rows") {
         val determiner = new SpreadsheetHeadingsDeterminer(new TestFactory.UnimplementedAsker {
@@ -68,7 +68,7 @@ class SpreadsheetHeadingsDeterminerTest extends FunSpec {
       val rows = List(
         List("", "col1", "col2", "col3", "", ""),
         List(4, 5, 6)
-      )
+      ).zipWithIndex
 
       it("does not present the user with the blank ends") {
         val determiner = new SpreadsheetHeadingsDeterminer(new TestFactory.UnimplementedAsker {
@@ -91,7 +91,7 @@ class SpreadsheetHeadingsDeterminerTest extends FunSpec {
         List("overall_title"),
         List("col1", "col2", "col3"),
         List(4, 5, 6)
-      )
+      ).zipWithIndex
 
       it("orders choices by closeness to the median length") {
         val determiner = new SpreadsheetHeadingsDeterminer(new TestFactory.UnimplementedAsker {
