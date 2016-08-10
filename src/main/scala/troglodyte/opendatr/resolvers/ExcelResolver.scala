@@ -29,10 +29,17 @@ class ExcelResolver(asker: Asker) extends Resolver {
       val (ignoreRow, columnsToHeadings) = getColumnsToHeadingsMap(firstSheet)
       Some(new Dataset(firstSheet.rowIterator.asScala
         .filter(row => ignoreRow.isEmpty || ignoreRow.exists(_ < row.getRowNum)) // Select only rows after the heading
+        .filterNot(row => row.cellIterator.asScala.mkString.trim.isEmpty)
         .map(row => {
-          new Entity(row.cellIterator.asScala.map(cell =>
-            (columnsToHeadings(cell.getColumnIndex), getCellValue(cell))
-          ).toMap)
+          row.cellIterator.asScala
+            .filter(cell => columnsToHeadings.contains(cell.getColumnIndex))
+            .map(cell =>
+              (columnsToHeadings(cell.getColumnIndex), getCellValue(cell))
+            ).toMap
+        })
+        .filter(row => row.map(_._2).mkString.trim.nonEmpty)
+        .map(row => {
+          new Entity(row)
         }).toList
       ))
     }
@@ -60,10 +67,24 @@ class ExcelResolver(asker: Asker) extends Resolver {
       sheet.rowIterator.asScala.take(10).map(
         row => row.cellIterator.asScala.map(
           cell => getCellValue(cell).toString).toList).toList)
+
     if (headingsRowNumber.nonEmpty) {
-      (headingsRowNumber, sheet.getRow(headingsRowNumber.get).cellIterator.asScala.map(cell => (cell.getColumnIndex, getCellValue(cell).toString)).toMap)
+      (
+        headingsRowNumber,
+        sheet.getRow(headingsRowNumber.get)
+          .cellIterator.asScala
+          .map(cell => (cell.getColumnIndex, getCellValue(cell).toString))
+          .filter(_._2.nonEmpty)
+          .toMap
+      )
     } else {
-      (None, sheet.getRow(sheet.getFirstRowNum).cellIterator.asScala.map(cell => (cell.getColumnIndex, cell.getColumnIndex.toString)).toMap)
+      (
+        None,
+        sheet.getRow(sheet.getFirstRowNum)
+          .cellIterator.asScala
+          .map(cell => (cell.getColumnIndex, cell.getColumnIndex.toString))
+          .toMap
+      )
     }
   }
 }
