@@ -65,8 +65,11 @@ class ExcelResolver(asker: Asker) extends Resolver {
     val determiner = new SpreadsheetHeadingsDeterminer(asker)
     val headingsRowNumber = determiner.determineHeadings(
       sheet.rowIterator.asScala.take(10).map(
-        row => row.cellIterator.asScala.map(
-          cell => getCellValue(cell).toString).toList).toList)
+        row => (
+          row.cellIterator.asScala.map(
+            cell => getCellValue(cell).toString).toList,
+          row.getRowNum
+        )).toList)
 
     if (headingsRowNumber.nonEmpty) {
       (

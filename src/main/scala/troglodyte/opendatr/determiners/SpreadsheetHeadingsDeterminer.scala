@@ -4,12 +4,12 @@ import troglodyte.opendatr.askers.Asker
 import scala.Function.tupled
 
 class SpreadsheetHeadingsDeterminer(asker: Asker) {
-  def determineHeadings(rows: List[List[Any]]): Option[Int] = {
+  def determineHeadings(rows: List[(List[Any], Int)]): Option[Int] = {
     val filteredRows = orderByClosenessToMedian(
       eliminateGappyRows(
         eliminateBlankRows(
           trimRows(
-            rows.zipWithIndex))))
+            rows))))
     asker.choose('pick_headings_row, "Which of these options looks most like headings to you?",
       filteredRows.take(3).map(tupled { (r, idx) => r.mkString(", ") })).map(n =>
       filteredRows(n)._2
