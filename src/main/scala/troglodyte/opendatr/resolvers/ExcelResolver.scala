@@ -44,7 +44,12 @@ class ExcelResolver(asker: Asker) extends Resolver {
       case Cell.CELL_TYPE_NUMERIC => if (DateUtil.isCellDateFormatted(cell)) cell.getDateCellValue else cell.getNumericCellValue
       case Cell.CELL_TYPE_BOOLEAN => cell.getBooleanCellValue
       case Cell.CELL_TYPE_BLANK => ""
-      case Cell.CELL_TYPE_FORMULA => throw new IllegalArgumentException(s"Can't get value of formulas yet") // Switch on cell.getCachedFormulaResultType to get this
+      case Cell.CELL_TYPE_FORMULA => cell.getCachedFormulaResultType match {
+        case Cell.CELL_TYPE_STRING => cell.getRichStringCellValue.getString
+        case Cell.CELL_TYPE_NUMERIC => if (DateUtil.isCellDateFormatted(cell)) cell.getDateCellValue else cell.getNumericCellValue
+        case Cell.CELL_TYPE_BOOLEAN => cell.getBooleanCellValue
+        case _ => throw new IllegalArgumentException(s"Can't get value of cell of type ${cell.getCellType}")
+      }
       case _ => throw new IllegalArgumentException(s"Can't get value of cell of type ${cell.getCellType}")
     }
   }
