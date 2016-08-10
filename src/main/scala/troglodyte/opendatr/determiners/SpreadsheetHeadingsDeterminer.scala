@@ -16,6 +16,15 @@ class SpreadsheetHeadingsDeterminer(asker: Asker) {
       filteredRows.take(3).map(tupled { (r, idx) => r.mkString(", ") })).map(n =>
       filteredRows(n)._2
     )
+
+    if (response.isEmpty) {
+      // try again without the headding
+      asker.chooseOrRefuse('pick_headings_row, "How about these?",
+        filteredRows.map(tupled { (r, idx) => r.mkString(", ") })).map(n =>
+        filteredRows(n)._2)
+    } else {
+      response
+    }
   }
 
   private def trimRows(rows: List[(List[Any], Int)]): List[(List[Any], Int)] = {
