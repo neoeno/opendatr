@@ -5,11 +5,12 @@ import scala.Function.tupled
 
 class SpreadsheetHeadingsDeterminer(asker: Asker) {
   def determineHeadings(rows: List[(List[Any], Int)]): Option[Int] = {
-    val filteredRows = orderByClosenessToMedian(
-      eliminateGappyRows(
-        eliminateBlankRows(
-          trimRows(
-            rows))))
+    val filteredRows = Function.chain(List(
+        orderByClosenessToMedian(_),
+        eliminateGappyRows(_),
+        eliminateBlankRows(_),
+        trimRows(_)
+      ))(rows)
     asker.choose('pick_headings_row, "Which of these options looks most like headings to you?",
       filteredRows.take(3).map(tupled { (r, idx) => r.mkString(", ") })).map(n =>
       filteredRows(n)._2
