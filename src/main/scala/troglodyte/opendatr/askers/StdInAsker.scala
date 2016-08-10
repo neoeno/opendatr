@@ -14,7 +14,15 @@ class StdInAsker extends Asker {
 
   override def show(information: String): Unit = println(information)
 
-  override def choose(name: Symbol, question: String, options: List[String]): Option[Integer] = {
+  override def choose(name: Symbol, question: String, options: List[String]): Integer = {
+    options.zipWithIndex.foreach(tupled { (option, idx) =>
+      println(s"${idx+1}. $option".white)
+    })
+    print(bullet(s"$question [1-${options.length} or N if none] ".yellow))
+    StdIn.readLine().toInt-1
+  }
+
+  override def chooseOrRefuse(name: Symbol, question: String, options: List[String]): Option[Integer] = {
     options.zipWithIndex.foreach(tupled { (option, idx) =>
       println(s"${idx+1}. $option".white)
     })

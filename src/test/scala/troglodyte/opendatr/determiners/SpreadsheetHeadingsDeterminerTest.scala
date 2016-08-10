@@ -29,7 +29,7 @@ class SpreadsheetHeadingsDeterminerTest extends FunSpec {
 
       it("does not present the user with empty rows") {
         val determiner = new SpreadsheetHeadingsDeterminer(new TestFactory.UnimplementedAsker {
-          override def choose(name: Symbol, question: String, options: List[String]): Option[Integer] = {
+          override def chooseOrRefuse(name: Symbol, question: String, options: List[String]): Option[Integer] = {
             assert(options == List(
               "col1, col2, col3",
               "4, 5, 6"
@@ -51,7 +51,7 @@ class SpreadsheetHeadingsDeterminerTest extends FunSpec {
 
       it("does not present the user with the gappy rows") {
         val determiner = new SpreadsheetHeadingsDeterminer(new TestFactory.UnimplementedAsker {
-          override def choose(name: Symbol, question: String, options: List[String]): Option[Integer] = {
+          override def chooseOrRefuse(name: Symbol, question: String, options: List[String]): Option[Integer] = {
             assert(options == List(
               "col1, col2, col3",
               "4, 5, 6"
@@ -72,7 +72,7 @@ class SpreadsheetHeadingsDeterminerTest extends FunSpec {
 
       it("does not present the user with the blank ends") {
         val determiner = new SpreadsheetHeadingsDeterminer(new TestFactory.UnimplementedAsker {
-          override def choose(name: Symbol, question: String, options: List[String]): Option[Integer] = {
+          override def chooseOrRefuse(name: Symbol, question: String, options: List[String]): Option[Integer] = {
             assert(options == List(
               "col1, col2, col3",
               "4, 5, 6"
@@ -95,7 +95,7 @@ class SpreadsheetHeadingsDeterminerTest extends FunSpec {
 
       it("orders choices by closeness to the median length") {
         val determiner = new SpreadsheetHeadingsDeterminer(new TestFactory.UnimplementedAsker {
-          override def choose(name: Symbol, question: String, options: List[String]): Option[Integer] = {
+          override def chooseOrRefuse(name: Symbol, question: String, options: List[String]): Option[Integer] = {
             assert(options == List(
               "col1, col2, col3",
               "4, 5, 6",

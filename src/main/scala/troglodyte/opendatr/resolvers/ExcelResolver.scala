@@ -25,8 +25,8 @@ class ExcelResolver(asker: Asker) extends Resolver {
   def pickSheet(workbook: Workbook): Sheet = {
     val sheets = workbook.sheetIterator.asScala.toList
     val choice = asker.choose('pick_sheet, "Which of these sheets would you like to export?",
-      sheets.map(sheet => sheet.getSheetName)) // TODO: no is not allowed
-    choice.map(workbook.getSheetAt(_)).get
+      sheets.map(sheet => sheet.getSheetName))
+    workbook.getSheetAt(choice)
   }
 
   override def resolve(puzzle: Any): Option[Any] = {
@@ -44,7 +44,7 @@ class ExcelResolver(asker: Asker) extends Resolver {
               (columnsToHeadings(cell.getColumnIndex), getCellValue(cell))
             ).toMap
         })
-        .filter(row => row.map(_._2).mkString.trim.nonEmpty)
+        .filter(row => row.values.mkString.trim.nonEmpty)
         .map(row => {
           new Entity(row)
         }).toList
