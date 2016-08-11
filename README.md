@@ -14,13 +14,9 @@ It won't do much yet though.
 
 ## Roadmap
 
-* Make XLS/XLSX attribute extractor smarter
-* Shapefile resolver
-* Zip resolver
-* Attribute prompting
-* Dataset gatherer
-* Recipe saver
-* Failed dataset reporting
+* Get all of `MASTER_mps-figures_new.xls` resolving correctly
+* Refactor spreadsheet code
+* Try to preserve order
 
 ## License
 
