@@ -9,7 +9,7 @@ class SpreadsheetHeadingsDeterminer(asker: Asker) {
     val filteredRows = applyRowHeuristics(rows)
 
     proposeRows("Which of these options looks most like headings to you?", filteredRows.take(3)).orElse(
-      proposeRows("How about these?", filteredRows)
+      proposeRows("How about these?", applyGenerousRowHeuristics(rows))
     )
   }
 
@@ -22,6 +22,12 @@ class SpreadsheetHeadingsDeterminer(asker: Asker) {
     trimRows(_),
     eliminateBlankRows(_),
     eliminateGappyRows(_),
+    orderByClosenessToMedian(_)
+  ))
+
+  private def applyGenerousRowHeuristics = Function.chain(List(
+    trimRows(_),
+    eliminateBlankRows(_),
     orderByClosenessToMedian(_)
   ))
 
