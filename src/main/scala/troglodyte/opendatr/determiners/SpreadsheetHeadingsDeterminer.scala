@@ -1,31 +1,29 @@
 package troglodyte.opendatr.determiners
 
 import troglodyte.opendatr.askers.Asker
-import scala.Function.tupled
+
+import scala.Function._
 
 class SpreadsheetHeadingsDeterminer(asker: Asker) {
   def determineHeadings(rows: List[(List[Any], Int)]): Option[Int] = {
-    val filteredRows = Function.chain(List(
-      trimRows(_),
-      eliminateBlankRows(_),
-      eliminateGappyRows(_),
-      orderByClosenessToMedian(_)
-    ))(rows)
+    val filteredRows = applyRowHeuristics(rows)
 
-    val response = asker.chooseOrRefuse('pick_headings_row, "Which of these options looks most like headings to you?",
-      filteredRows.take(3).map(tupled { (r, idx) => r.mkString(", ") })).map(n =>
-      filteredRows(n)._2
+    proposeRows("Which of these options looks most like headings to you?", filteredRows.take(3)).orElse(
+      proposeRows("How about these?", filteredRows)
     )
-
-    if (response.isEmpty) {
-      // try again without the headding
-      asker.chooseOrRefuse('pick_headings_row, "How about these?",
-        filteredRows.map(tupled { (r, idx) => r.mkString(", ") })).map(n =>
-        filteredRows(n)._2)
-    } else {
-      response
-    }
   }
+
+  private def proposeRows(message: String, rows: List[(List[Any], Int)]): Option[Int] = {
+    asker.chooseOrRefuse('pick_headings_row, message,
+      rows.map(tupled { (r, _) => r.mkString(", ") })).map(n => rows(n)._2)
+  }
+
+  private def applyRowHeuristics = Function.chain(List(
+    trimRows(_),
+    eliminateBlankRows(_),
+    eliminateGappyRows(_),
+    orderByClosenessToMedian(_)
+  ))
 
   private def trimRows(rows: List[(List[Any], Int)]): List[(List[Any], Int)] = {
     rows.map(tupled { (row, idx) =>
@@ -36,7 +34,7 @@ class SpreadsheetHeadingsDeterminer(asker: Asker) {
           .dropWhile(cell => cell.toString.trim.isEmpty)
           .reverse,
         idx
-      )
+        )
     })
   }
 
