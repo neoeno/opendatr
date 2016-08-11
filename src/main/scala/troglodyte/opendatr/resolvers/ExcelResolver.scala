@@ -34,23 +34,9 @@ class ExcelResolver(asker: Asker) extends Resolver {
   override def resolve(puzzle: Any): Option[Any] = {
     val file = puzzle.asInstanceOf[File]
     ResolverUtils.withClosing(WorkbookFactory.create(file)) { workbook =>
-      val sheet = pickSheet(workbook)
-      val (ignoreRow, columnsToHeadings) = determiner.determineHeadings(sheet)
-      Some(new Dataset(sheet.rowIterator.asScala
-        .filter(row => ignoreRow.isEmpty || ignoreRow.exists(_ < row.getRowNum)) // Select only rows after the heading
-        .filterNot(row => row.cellIterator.asScala.mkString.trim.isEmpty)
-        .map(row => {
-          row.cellIterator.asScala
-            .filter(cell => columnsToHeadings.contains(cell.getColumnIndex))
-            .map(cell =>
-              (columnsToHeadings(cell.getColumnIndex), determiner.getCellValue(cell))
-            ).toMap
-        })
-        .filter(row => row.values.mkString.trim.nonEmpty)
-        .map(row => {
-          new Entity(row)
-        }).toList
-      ))
+      val dataMaps = determiner.sheetToMaps(pickSheet(workbook))
+      val dataset = new Dataset(dataMaps.map(new Entity(_)).toList)
+      Some(dataset)
     }
   }
 }
